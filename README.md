@@ -2,7 +2,7 @@
  * @Author: FunctionSir
  * @License: AGPLv3
  * @Date: 2024-02-28 16:30:44
- * @LastEditTime: 2024-03-17 13:28:22
+ * @LastEditTime: 2024-03-17 20:04:55
  * @LastEditors: FunctionSir
  * @Description: -
  * @FilePath: /MyIpD/README.md
@@ -16,7 +16,7 @@ Let the server publish its IP addr.
 
 ## Current version 当前版本
 
-0.0.2 (TinaSprout)
+0.0.2 (TinaSprout)  
 It is in alpha stage now and the codename(TinaSprout) will be used until the beta stage or stable stage arrived.
 
 该软件目前处于alpha阶段, 版本代号(TinaSprout)将会一直被使用直到beta或稳定阶段到来.
