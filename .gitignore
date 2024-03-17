@@ -27,4 +27,4 @@ go.work
 genreleases.py
 
 # Releases
-releases/
+release/

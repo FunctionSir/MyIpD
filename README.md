@@ -2,7 +2,7 @@
  * @Author: FunctionSir
  * @License: AGPLv3
  * @Date: 2024-02-28 16:30:44
- * @LastEditTime: 2024-02-29 17:50:43
+ * @LastEditTime: 2024-03-17 13:28:22
  * @LastEditors: FunctionSir
  * @Description: -
  * @FilePath: /MyIpD/README.md
@@ -16,7 +16,7 @@ Let the server publish its IP addr.
 
 ## Current version 当前版本
 
-0.0.1 (TinaSprout)
+0.0.2 (TinaSprout)
 It is in alpha stage now and the codename(TinaSprout) will be used until the beta stage or stable stage arrived.
 
 该软件目前处于alpha阶段, 版本代号(TinaSprout)将会一直被使用直到beta或稳定阶段到来.
@@ -52,43 +52,97 @@ To build, just run "go build -ldflags '-s -w' -o myipd". For Windows, you might 
 ## Args and default values 参数和默认值
 
 1. -l, --listen, Addr and port to listen on, 0.0.0.0:2170
-2. -t, --tokens-file, File which contains tokens, tokens.conf
-3. -6, --enable-ipv6, Enable IPv6 support, false
-4. --disable-ipv4, Disable IPv4 support, false
+2. -t, --tokens-file, File which contains tokens, "tokens.conf"
+3. -e, --extras-file, Extras file you want to use, "" (empty string)
+4. -6, --enable-ipv6, Enable IPv6 support, false
+5. --disable-ipv4, Disable IPv4 support, false
+6. -q, --quiet, Disable hello and logs, false
+7. --no-time, Do NOT print time, false
+8. --no-log, Do NOT print logs, false
+9. --no-hello, Do NOT print hello info, false
+10. --no-tags, Do NOT send tags, false
 
+P.S. No matter -6 is added to your args or not, ALL IPs in your "extras file" will be sent.  
+P.S. --no-tags will also let it won't send tags in your "extras file"  
 P.S. Related source code was shown in the FYI section below.
 
 1. -l, --listen, 监听的地址和端口, 0.0.0.0:2170
-2. -t, --tokens-file, 包含tokens的文件, tokens.conf
-3. -6, --enable-ipv6, 启用IPv6支持, false
-4. --disable-ipv4, 禁用IPv4支持, false
+2. -t, --tokens-file, 包含tokens的文件, "tokens.conf"
+3. -e, --extras-file, 指定要使用的extras file, "" (空字符串)
+4. -6, --enable-ipv6, 启用IPv6支持, false
+5. --disable-ipv4, 禁用IPv4支持, false
+6. -q, --quiet, 禁用hello和日志, false
+7. --no-time, 不要输出和时间, false
+8. --no-log, 不要输出日志, false
+9. --no-hello, 不要输出hello信息, false
+10. --no-tags, 不要发送tags, false
 
+P.S. 无论是否添加了-6到您的参数, 所有的在您"extras file"里的IP将被发送.  
+P.S. --no-tags将会同时禁止发送"extras file"中您写的tags.  
 P.S. 相关源代码在下方的供参考部分展示.
+
+## Extras file
+
+Extras file is where you can add your own IP addr entries.
+
+Extras file是您可以加入您自己的IP条目的地方
 
 ## FYI 供参考
 
 ```go
 const (
  // Basic info //
- VER          string = "0.0.1"
+ VER          string = "0.0.2"
  VER_CODENAME string = "TinaSprout"
+ RELEASE_DATE string = "2024-03-16"
  // Internet IP srcs //
- INTERNET_IP4_SRC = "https://ipv4.icanhazip.com"
- INTERNET_IP6_SRC = "https://ipv6.icanhazip.com"
+ INTERNET_IP4_SRC string = "https://ipv4.icanhazip.com"
+ INTERNET_IP6_SRC string = "https://ipv6.icanhazip.com"
  // Default values //
- DEFAULT_LISTEN      = "0.0.0.0:2170"
- DEFAULT_TOKENS_FILE = "tokens.conf"
- DEFAULT_ENABLE_IP4  = true
- DEFAULT_ENABLE_IP6  = false
+ DEFAULT_LISTEN      string = "0.0.0.0:2170"
+ DEFAULT_TOKENS_FILE string = "tokens.conf"
+ DEFAULT_EXTRAS_FILE string = ""
+ DEFAULT_ENABLE_IP4  bool   = true
+ DEFAULT_ENABLE_IP6  bool   = false
+ DEFAULT_NO_TAGS     bool   = false
+ DEFAULT_PRINT_HELLO bool   = true
+ DEFAULT_PRINT_LOG   bool   = true
+ DEFAULT_PRINT_TIME  bool   = true
 )
+```
 
+```go
 var (
  // Setting entries related //
  Listen     string = DEFAULT_LISTEN
  TokensFile string = DEFAULT_TOKENS_FILE
+ ExtrasFile string = DEFAULT_EXTRAS_FILE
  EnableIp4  bool   = DEFAULT_ENABLE_IP4
  EnableIp6  bool   = DEFAULT_ENABLE_IP6
+ NoTags     bool   = DEFAULT_NO_TAGS
+ PrintHello bool   = DEFAULT_PRINT_HELLO
+ PrintLog   bool   = DEFAULT_PRINT_LOG
+ PrintTime  bool   = DEFAULT_PRINT_TIME
  // Token related //
- Tokens []string = []string{}
+ Tokens []string      = []string{}
+ Extras []ExtrasEntry = []ExtrasEntry{}
 )
+```
+
+```go
+func http_handler(w http.ResponseWriter, r *http.Request) {
+  //......//
+  // Extras //
+  for i := 0; i < len(Extras); i++ {
+   tagStr := Extras[i].TagStr
+   extIpAddr := Extras[i].IpAddr
+   shim := " "
+   if NoTags || !tagSwitch {
+    tagStr = ""
+    shim = ""
+   }
+   lines = append(lines, tagStr+shim+extIpAddr)
+  }
+  //......//
+}
 ```
